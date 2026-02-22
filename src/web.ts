@@ -42,8 +42,14 @@ export type WebSocketRoutes = {
 };
 
 export async function startWeb() {
+    const tls = Environment.WEB_CERT && Environment.WEB_KEY ? {
+        cert: Bun.file(Environment.WEB_CERT),
+        key: Bun.file(Environment.WEB_KEY),
+    } : undefined;
+
     Bun.serve<WebSocketData, WebSocketRoutes>({
         port: Environment.WEB_PORT,
+        tls,
         async fetch(req, server) {
             const url = new URL(req.url ?? `', 'http://${req.headers.get('host')}`);
 
@@ -112,7 +118,8 @@ export async function startWeb() {
             } else if (fs.existsSync(`public${url.pathname}`)) {
                 return new Response(Bun.file(`public${url.pathname}`), {
                     headers: {
-                        'Content-Type': MIME_TYPES.get(path.extname(url.pathname ?? '')) ?? 'text/plain'
+                        'Content-Type': MIME_TYPES.get(path.extname(url.pathname ?? '')) ?? 'text/plain',
+                        'Cache-Control': 'no-cache'
                     }
                 });
             } else {
