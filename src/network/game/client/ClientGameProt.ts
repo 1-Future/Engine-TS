@@ -96,6 +96,8 @@ export default class ClientGameProt {
     static readonly MESSAGE_PUBLIC = new ClientGameProt(83, -1); // NXT naming
     static readonly MOVE_GAMECLICK = new ClientGameProt(6, -1); // NXT naming
 
+    static readonly BOOT_HALT = new ClientGameProt(250, 0); // BootScape: halt movement at server-authoritative tile
+
     constructor(
         readonly id: number,
         readonly length: number

@@ -79,6 +79,8 @@ import EventMouseClickDecoder from '#/network/game/client/codec/EventMouseClickD
 import EventMouseClickHandler from '#/network/game/client/handler/EventMouseClickHandler.js';
 import EventMouseMoveDecoder from '#/network/game/client/codec/EventMouseMoveDecoder.js';
 import EventMouseMoveHandler from '#/network/game/client/handler/EventMouseMoveHandler.js';
+import BootHaltDecoder from '#/network/game/client/codec/BootHaltDecoder.js';
+import BootHaltHandler from '#/network/game/client/handler/BootHaltHandler.js';
 
 class ClientGameProtRepository {
     decoders: Map<number, ClientGameMessageDecoder<ClientGameMessage>> = new Map();
@@ -169,6 +171,7 @@ class ClientGameProtRepository {
         this.bind(new EventAppletFocusDecoder(), new EventAppletFocusHandler());
         this.bind(new EventMouseClickDecoder(), new EventMouseClickHandler());
         this.bind(new EventMouseMoveDecoder(), new EventMouseMoveHandler());
+        this.bind(new BootHaltDecoder(), new BootHaltHandler());
     }
 }
 
