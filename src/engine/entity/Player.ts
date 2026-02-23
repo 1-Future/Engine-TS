@@ -360,6 +360,7 @@ export default class Player extends PathingEntity {
     requestModalClose = false;
 
     protect: boolean = false; // whether protected access is available
+    bootFrozen: boolean = false; // BootScape: blocks movement only, combat continues
     activeScript: ScriptState | null = null;
     resumeButtons: number[] = [];
 
@@ -660,6 +661,11 @@ export default class Player extends PathingEntity {
     // ----
 
     updateMovement(): boolean {
+        // BootScape: block all movement while frozen, but don't affect combat
+        if (this.bootFrozen) {
+            return false;
+        }
+
         // players cannot walk if they have a modal open *and* something in their queue, confirmed as far back as 2005
         if (this.moveClickRequest && this.busy() && (this.queue.head() != null || this.engineQueue.head() != null)) {
             return false;

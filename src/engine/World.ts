@@ -296,6 +296,7 @@ class World {
         WordEnc.load('data/pack');
 
         this.reload();
+        this.bootDisableDoorCollision();
 
         if (!skipMaps) {
             this.gameMap.init();
@@ -331,6 +332,40 @@ class World {
             this.nextTick = Date.now() + World.TICKRATE;
             this.cycle();
         }
+    }
+
+    // BootScape: remove wall collision from all normal door/gate loc types
+    // so players can walk through without interacting.
+    private bootDisableDoorCollision(): void {
+        const doorCategories = new Set<number>();
+        const categoryNames = [
+            'door_closed', 'door_opened',
+            'door_left_closed', 'door_left_opened',
+            'door_right_closed', 'door_right_opened',
+            'door_open_and_close', 'double_door_open_and_close_left', 'double_door_open_and_close_right',
+            'gate_main_closed', 'gate_main_open',
+            'gate_outer_closed', 'gate_outer_open'
+        ];
+        for (const name of categoryNames) {
+            const id = CategoryType.getId(name);
+            if (id !== -1) {
+                doorCategories.add(id);
+            }
+        }
+
+        let count = 0;
+        for (let i = 0; i < LocType.count; i++) {
+            const type = LocType.get(i);
+            if (type && doorCategories.has(type.category)) {
+                if (type.blockwalk) {
+                    type.blockwalk = false;
+                }
+                type.op = null;
+                count++;
+            }
+        }
+
+        printDebug(`BootScape: disabled collision and interaction for ${count} door/gate loc types`);
     }
 
     // ----
@@ -614,7 +649,7 @@ class World {
                 if (isClientConnected(player) && player.decodeIn()) {
                     const followingPlayer = player.targetOp === ServerTriggerType.APPLAYER3 || player.targetOp === ServerTriggerType.OPPLAYER3;
                     if (player.userPath.length > 0 || player.opcalled) {
-                        if (player.delayed) {
+                        if (player.delayed || player.bootFrozen) {
                             player.unsetMapFlag();
                             continue;
                         }

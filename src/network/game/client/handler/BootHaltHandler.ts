@@ -4,13 +4,11 @@ import BootHalt from '#/network/game/client/model/BootHalt.js';
 
 export default class BootHaltHandler extends ClientGameMessageHandler<BootHalt> {
     handle(_message: BootHalt, player: Player): boolean {
-        // Stop the player at the server's authoritative tile position.
-        // clearInteraction cancels pending combat/NPC approach actions that would
-        // otherwise re-queue waypoints on the next tick after we clear them.
-        // Do NOT call unsetMapFlag — the client's minimap flag is preserved
-        // for auto-resume when the player starts walking again.
-        player.clearInteraction();
+        // BootScape: player stopped walking IRL — freeze movement only.
+        // Uses bootFrozen flag so combat/interactions continue normally.
+        // Do NOT use player.delayed — that blocks scripts, interactions, and combat.
         player.clearWaypoints();
+        player.bootFrozen = true;
         return true;
     }
 }

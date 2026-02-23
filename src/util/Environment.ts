@@ -10,6 +10,8 @@ export default {
 
     /// web server
     WEB_PORT: tryParseInt(process.env.WEB_PORT, process.platform === 'win32' || process.platform === 'darwin' ? 80 : 8888),
+    WEB_CERT: tryParseString(process.env.WEB_CERT, ''),
+    WEB_KEY: tryParseString(process.env.WEB_KEY, ''),
     WEB_ALLOWED_ORIGIN: tryParseString(process.env.WEB_ALLOWED_ORIGIN, ''),
     // WEB_SOCKET_TOKEN_RPOTECTION tightens security somewhat by embedding a token in the
     // rs2.cgi html which is sent on each login. if token is absent or wrong,
